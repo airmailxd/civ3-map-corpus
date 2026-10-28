@@ -2,6 +2,7 @@
 # snapshot, each writing its maps to the corpus folder vm_civ3gen-<n>.
 #
 #   powershell -File tools\civ3_maps\vm\clone.ps1 -Count 6 -Maps 3
+#   powershell -File ...\clone.ps1 -Count 2 -Tasks "--sizes=Tiny,Small;--sizes=Huge"
 #
 # Each VM makes its share of every world setting Civ3 offers (-Tasks, one
 # string of generate.py arguments per VM; by default each size of world,
@@ -24,6 +25,11 @@ param(
 )
 $ErrorActionPreference = "Stop"
 $vbox = "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe"
+# powershell -File passes -Tasks "a","b" as one string, so tasks may also
+# come as one, separated by ';': -Tasks "--sizes=Tiny;--sizes=Huge".
+if ($Tasks.Count -eq 1 -and $Tasks[0] -match ';') {
+	$Tasks = $Tasks[0] -split ';' | ForEach-Object { $_.Trim() }
+}
 # Every landform, water, climate, temperature and age, unless a task says.
 $all = "--landforms=Pan,Con,Arc --water=80,70,60 --climates=Ari,Nrm,Wet --temperatures=Wrm,Tmp,Col --ages=3B,4B,5B"
 $vms = & $vbox list vms
