@@ -234,9 +234,9 @@ def dismiss_steam_error():
     dialog = user32.FindWindowW('#32770', 'Fatal Error')
     if not dialog:
         return False
-    key(0x12)
-    user32.SetForegroundWindow(dialog)
-    time.sleep(0.2)
-    key(VK_RETURN)
+    # OK as the box's own command, which needs no focus (a key press goes
+    # to whatever window has it, which Windows doesn't always hand over).
+    WM_COMMAND, IDOK = 0x111, 1
+    user32.PostMessageW(dialog, WM_COMMAND, IDOK, 0)
     time.sleep(0.5)
     return True
