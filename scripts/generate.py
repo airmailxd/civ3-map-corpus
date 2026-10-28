@@ -93,13 +93,17 @@ def at_main_menu(img):
 
 
 def at_world_setup(img):
-    # The seed field, and the sea of the climate picture.
-    return near(pixel(img, 1250, 53), (255, 247, 222)) and near(pixel(img, 500, 1000), (41, 173, 189))
+    # The seed field, and the screen's plain parchment at the left and the
+    # bottom, the same at 1600x1200 and 1024x768. (Not the climate pictures:
+    # the one chosen lights up, which a pixel there took for another screen.)
+    return (near(pixel(img, 1250, 53), (255, 247, 222)) and near(pixel(img, 60, 400), (123, 123, 99), 20)
+            and near(pixel(img, 800, 1180), (231, 206, 165), 20))
 
 
 def at_player_setup(img):
-    # The civilization list's parchment, and the leader portrait's dark.
-    return near(pixel(img, 160, 400), (255, 247, 206)) and near(pixel(img, 800, 60), (57, 33, 33), 45)
+    # The civilization list's parchment, and the difficulty bar. (Not the
+    # leader portrait, which is whichever civ the screen opens on.)
+    return near(pixel(img, 160, 400), (255, 247, 206)) and near(pixel(img, 250, 1100), (173, 214, 214))
 
 
 def dawn_popup(img):
@@ -290,7 +294,9 @@ def restart_civ3(out, why):
         # the old one go.
         if LAUNCH == 'dxwnd':
             c.dxwnd_kill()
-        if c.is_open():
+        # In a VM, also any Civ3 still waiting behind its Steam box (it has no
+        # main window yet), so only one is ever started.
+        if c.is_open() or LAUNCH == 'exe':
             subprocess.run(['taskkill', '/F', '/IM', 'Civ3Conquests.exe'], capture_output=True)
             time.sleep(3)
         time.sleep(2)
